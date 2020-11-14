@@ -1,23 +1,53 @@
-import logo from './logo.svg';
+import React, { useState, useEffect } from 'react';
 import './App.css';
+import Modal from './components/modal/modal.component';
+import Bookmark from './components/bookmark/bookmark.component';
 
 function App() {
+
+  const toggleModal = () => {
+    setShowModal(!showModal)
+  }
+  const [bookmarks, setBookmarks] = useState(
+    [
+      // {
+      //   name: 'Jacinto Design',
+      //   url: 'https://jacinto.design',
+      // },
+    ]
+  )
+  const [showModal, setShowModal] = useState(false);
+
+  const obj = {bookmarks, setBookmarks, showModal, toggleModal};
+
+  useEffect(() => {
+    // Get bookmarks from localStorage if available
+    if(localStorage.getItem('bookmarks')) {
+      setBookmarks(JSON.parse(localStorage.getItem('bookmarks')));
+    } else {
+      // Create bookmarks array in localStorage
+      const firstBookmark = [
+        {
+          name: 'Jacinto Design',
+          url: 'https://jacinto.design',
+        },
+      ];
+      setBookmarks(firstBookmark);
+      localStorage.setItem('bookmarks', JSON.stringify(firstBookmark));
+    }
+  }, [setBookmarks])
+
+
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1 id="show-modal" onClick={toggleModal}>Add Bookmark</h1>
+      <div className="container">
+        {bookmarks.map((bookmark, index) => (
+          <Bookmark key={index} {...bookmark} {...obj}/>
+        ))}
+      </div>
+      <Modal {...obj}/>
     </div>
   );
 }
